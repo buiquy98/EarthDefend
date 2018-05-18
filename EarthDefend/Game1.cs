@@ -25,18 +25,18 @@ namespace EarthDefend
 
         public static int screenHeight;
         public static int screenWidth;
+        public static bool isScore = false;
 
         public bool hasStarted = false;
         public float timer;
 
-        Song song;
-        SoundEffect soundEffect;
+        Sound Sound;
 
-        
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
+            this.Window.Title = "Earth Defend";
             Content.RootDirectory = "Content";
             random = new Random();
 
@@ -75,39 +75,19 @@ namespace EarthDefend
             spriteBatch = new SpriteBatch(GraphicsDevice);
             //LoadbgMusic();
             //playBackgroundMusic();
-            
-            // TODO: use this.Content to load your game content here
             Restart();
+            // TODO: use this.Content to load your game content here
         }
 
         
-        private void LoadbgMusic()
-        {
-            song = Content.Load<Song>("bgmusic");
-            MediaPlayer.Play(song);
-            MediaPlayer.MediaStateChanged += MediaPlayer_MediaStateChanged;
-        }
 
-        private void MediaPlayer_MediaStateChanged(object sender, EventArgs e)
-        {
-            MediaPlayer.Volume -= -0.1f;
-            MediaPlayer.Play(song);
-        }
-
-        //private void playBackgroundMusic()
-        //{
-        //    soundEffects.Add(Content.Load<SoundEffect>("musicbackground"));
-
-        //    soundEffects[0].Play();
-
-        //    SoundEffectInstance instance = soundEffects[0].CreateInstance();
-        //    instance.IsLooped = true;
-        //    soundEffects[0].Play(0.5f, 0.0f, 0.0f);
-        //}
-
+        /// <summary>
+        /// Load background, ship
+        /// </summary>
         private void Restart()
         {
-            //load Texture2D Ship 
+            //load Texture2D Ship, background, Font score 
+            font = Content.Load<SpriteFont>("score");
             background = Content.Load<Texture2D>("background");
             var ship = Content.Load<Texture2D>("af");
             sprites = new List<Sprite>
@@ -115,8 +95,7 @@ namespace EarthDefend
                 
                 new Ship(ship)
                 {
-                    //position=new Vector2(10,600),
-                    //Bullet=new Bullet(Content.Load<Texture2D>("bullet")),
+                    // set Input từ Keyboard
                     Input= new Input()
                     {
                         Left=Keys.Left,
@@ -128,7 +107,6 @@ namespace EarthDefend
                     speed=10f,
                 }
             };
-            font = Content.Load<SpriteFont>("score");
             hasStarted = false;
         }
 
@@ -152,7 +130,7 @@ namespace EarthDefend
             if (Keyboard.GetState().IsKeyDown(Keys.Enter))
             {
                 hasStarted = true;
-                LoadbgMusic();
+                Sound.playBgMusic();
             }
             if (!hasStarted)
             {
@@ -173,11 +151,6 @@ namespace EarthDefend
                     
                 }
             }
-            //if (hasStarted==true)
-            //{
-            //    playBackgroundMusic();
-            //}
-
             timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
             foreach (var item in sprites)
             {
@@ -207,11 +180,11 @@ namespace EarthDefend
                     if (ship.hasDied == true)
                     {
                         Restart();
-                        LoadbgMusic();
+                       
                     }
                 }
             }
-
+           
             base.Update(gameTime);
         }
 
@@ -239,10 +212,7 @@ namespace EarthDefend
                     spriteBatch.DrawString(font, string.Format("Life: {0}", ((Ship)item).life), new Vector2(10, 30), Color.AliceBlue);
                 }
             }
-
             spriteBatch.End();
-
-
             base.Draw(gameTime);
         }
     }

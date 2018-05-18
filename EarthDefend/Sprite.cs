@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
@@ -31,7 +32,6 @@ namespace EarthDefend
         public Vector2 direction;
         public Vector2 veloctity;
 
-        public Sprite parent;
         public Input Input;
 
         public float lifeSpan = 0f;
@@ -50,6 +50,10 @@ namespace EarthDefend
         {
             texture = texture2D;
             origin = new Vector2(texture.Width / 2, texture.Height / 2);
+        }
+        public virtual void LoadContent(ContentManager content)
+        {
+            texture = content.Load<Texture2D>("");
         }
 
         public virtual void Update(GameTime gameTime, List<Sprite> sprites)
